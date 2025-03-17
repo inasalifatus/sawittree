@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: sawittree-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: sawittree
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: sawittree-app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "host=db user=postgres password=root dbname=sawittree sslmode=disable TimeZone=Asia/Jakarta"
+    ports:
+      - "8080:8080"
+    command: ["./main"]
+
+volumes:
+  pgdata:

@@ -26,9 +26,13 @@ func (h *DroneHandler) CalculateDronePathWithLimit(c echo.Context) error {
 	estateID := c.Param("id")
 	maxDistanceStr := c.QueryParam("max_distance")
 
-	maxDistance, err := strconv.Atoi(maxDistanceStr)
-	if err != nil || maxDistance <= 0 {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid max_distance"})
+	maxDistance := -1
+	if maxDistanceStr != "" { // Jika parameter diberikan, validasi
+		var err error
+		maxDistance, err = strconv.Atoi(maxDistanceStr)
+		if err != nil || maxDistance <= 0 {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid max_distance"})
+		}
 	}
 
 	distance, restX, restY, err := h.Service.CalculateDronePathWithLimit(estateID, maxDistance)
