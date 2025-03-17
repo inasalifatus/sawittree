@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"sawittree/models"
 
 	"gorm.io/driver/postgres"
@@ -14,7 +15,25 @@ var DB *gorm.DB
 
 func InitDb() {
 
-	connectionString := "user=postgres password=root dbname=sawittree host=localhost port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
+
+	if dbPort == "" {
+		dbPort = "5432" 
+	}
+
+	connectionString :=
+		"host=" + dbHost +
+			" user=" + dbUser +
+			" password=" + dbPassword +
+			" dbname=" + dbName +
+			" port=" + dbPort +
+			" sslmode=disable TimeZone=Asia/Jakarta"
+
+	// connectionString := "user=postgres password=root dbname=sawittree host=localhost port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 
 	var err error
 	DB, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
